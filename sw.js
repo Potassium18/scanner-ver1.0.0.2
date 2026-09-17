@@ -1,8 +1,7 @@
-const CACHE_NAME = 'scanqr-admin-v1';
+const CACHE_NAME = 'qr-scanner-v1';
 const ASSETS_TO_CACHE = [
-  './admin.html',
-  './admin.js',
-  './admin.css',
+  './',
+  './index.html',
   './manifest.json'
 ];
 
@@ -32,9 +31,9 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Event - Cache First with Network Fallback
+// Fetch Event - Dynamic Network First for API, Cache First for Static Files
 self.addEventListener('fetch', (event) => {
-  // Pass Google Apps Script API calls directly through network
+  // Always send Google Apps Script API calls directly over network
   if (event.request.url.includes('script.google.com')) {
     return;
   }

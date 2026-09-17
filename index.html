@@ -6,12 +6,12 @@
     <title>ScanQR - Scanner</title>
     <link rel="stylesheet" href="main.css">
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-    <!-- PWA Settings -->
+<!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1b4d3e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="QR Admin">
+    <meta name="apple-mobile-web-app-title" content="QR Scanner">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3408/3408591.png">
 </head>
 <body>
@@ -159,20 +159,20 @@
     <canvas id="canvas" hidden></canvas>
     <script src="main.js"></script>
 </body>
-<!-- Register Service Worker & Handle App Installation -->
+<!-- PWA Registration & Install Listener -->
     <script>
         // 1. Register Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then((reg) => console.log('Service Worker registered successfully:', reg.scope))
+                navigator.serviceWorker.register('sw.js')
+                    .then((reg) => console.log('Scanner Service Worker registered:', reg.scope))
                     .catch((err) => console.warn('Service Worker registration failed:', err));
             });
         }
 
-        // 2. Handle PWA Installation Trigger
+        // 2. Handle Installation Prompt
         let deferredPrompt;
-        const installBtn = document.getElementById('installAppBtn');
+        const installBtn = document.getElementById('installScannerBtn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -186,7 +186,7 @@
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
                 if (outcome === 'accepted') {
-                    console.log('App installed successfully');
+                    console.log('Scanner App installed successfully');
                 }
                 deferredPrompt = null;
                 installBtn.style.display = 'none';

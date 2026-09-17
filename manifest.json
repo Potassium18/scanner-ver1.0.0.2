@@ -1,11 +1,11 @@
 {
-  "name": "QR Attendance Admin",
-  "short_name": "QR Admin",
-  "start_url": "./admin.html",
+  "name": "QR Code Scanner",
+  "short_name": "QR Scanner",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1b4d3e",
-  "description": "Admin Panel & Logs Manager for ScanQR Attendance System",
+  "description": "Fast & Offline-Ready Attendance QR Code Scanner",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3408/3408591.png",
