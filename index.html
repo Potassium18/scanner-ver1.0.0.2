@@ -1,21 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>App Template</title>
-  <link rel="stylesheet" href="main.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Scanner</title>
+    <link rel="stylesheet" href="main.css">
+    <!-- jsQR Library for browser decoding -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Welcome to My App</h1>
-  </header>
 
-  <main id="app">
-    <p id="message">Click the button below to test interactivity.</p>
-    <button id="actionBtn">Click Me</button>
-  </main>
+    <div class="main-card">
+        <!-- Top Navigation & Privacy Badge -->
+        <div class="top-bar">
+            <div class="tab-group">
+                <button class="tab-btn" id="scanImageTab">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                    Scan Image
+                </button>
+                <button class="tab-btn active" id="cameraTab">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    Camera
+                </button>
+            </div>
+            <div class="privacy-tag">100% Private • Runs in your browser</div>
+        </div>
 
-  <script src="main.js"></script>
+        <!-- 2-Column Main Content -->
+        <div class="content-body">
+            
+            <!-- LEFT COLUMN: Camera/Scanner Preview -->
+            <div class="left-panel">
+                
+                <!-- Camera Tab View -->
+                <div id="cameraView" class="view-panel">
+                    <div class="preview-box" id="previewContainer">
+                        <video id="video" playsinline hidden></video>
+                        
+                        <!-- Dynamic Yellow QR Sensor Overlay -->
+                        <div id="qrBoundingBox" class="qr-bounding-box" hidden>
+                            <div class="corner top-left"></div>
+                            <div class="corner top-right"></div>
+                            <div class="corner bottom-left"></div>
+                            <div class="corner bottom-right"></div>
+                            <div class="laser-line"></div>
+                        </div>
+
+                        <div id="cameraOffState" class="placeholder-state">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M16 16L1 1M2 6h4l2-3h6l2 3h4a2 2 0 0 1 2 2v9m-4 1H3a2 2 0 0 1-2-2V8c0-.42.13-.81.35-1.15"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                            <p class="off-title">Camera is off.</p>
+                            <p class="off-sub">Press Start Camera to scan.</p>
+                        </div>
+                    </div>
+
+                    <div class="camera-controls">
+                        <button id="startCamBtn" class="btn btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            Start Camera
+                        </button>
+                        <button id="flashBtn" class="btn btn-icon" title="Toggle Flash" disabled>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        </button>
+                        <button id="switchCamBtn" class="btn btn-icon" title="Switch Camera" disabled>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scan Image Tab View -->
+                <div id="imageView" class="view-panel" hidden>
+                    <div class="drop-zone" id="dropZone">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <p class="off-title">Drop your QR code image here</p>
+                        <p class="off-sub">or click to browse from device</p>
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Scanned Result -->
+            <div class="right-panel">
+                <div class="result-header">
+                    <h2>Scanned Result</h2>
+                    <button class="btn-history" id="historyBtn">
+                        History <span class="badge-dot"></span>
+                    </button>
+                </div>
+
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span id="statusText">Camera inactive</span>
+                </div>
+
+                <div class="result-display-area" id="resultDisplay">
+                    <span class="placeholder-text">Scan a QR code to see results here...</span>
+                </div>
+
+                <button id="copyResultBtn" class="btn btn-primary-light" disabled>Copy Result</button>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span>Your images never leave this device — 100% browser-based</span>
+            <span class="divider">/</span>
+            <span>&lt;/&gt; Powered by <a href="#">Google's ZXing</a></span>
+        </footer>
+    </div>
+
+    <!-- Hidden Canvas for frame processing -->
+    <canvas id="canvas" hidden></canvas>
+
+    <script src="main.js"></script>
 </body>
 </html>
