@@ -228,106 +228,244 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- PARSER & SCAN LOGGER ---
-    async function handleNewScan(qrCodeMessage, imagePreviewUrl = null, scanType = 'Manual') {
-        const now = new Date();
-        const currentDate = now.toLocaleDateString();
-        const currentTime = now.toLocaleTimeString();
+// --- PARSER, SCAN LOGGER & GOOGLE SHEET SENDER ---
+async function handleNewScan(qrCodeMessage, imagePreviewUrl = null, scanType = 'Manual') {
+    const now = new Date();
+    const currentDate = now.toLocaleDateString();
+    const currentTime = now.toLocaleTimeString();
 
-        let name = "";
-        let college = "N/A";
-        let designation = "Member";
+    let name = "";
+    let college = "N/A";
+    let designation = "Member";
 
-        const designationsList = [
-            "Vice President",
-            "Asst. Business Manager",
-            "Asst. Team Leader",
-            "Business Manager",
-            "Undersecretary",
-            "Media Committee Head",
-            "Media Committee Graphic Artist",
-            "Content Creator",
-            "Team Leader",
-            "Representative",
-            "President",
-            "Secretary",
-            "Treasurer",
-            "PIO"
-        ];
+    const designationsList = [
+        "Vice President",
+        "Asst. Business Manager",
+        "Asst. Team Leader",
+        "Business Manager",
+        "Undersecretary",
+        "Media Committee Head",
+        "Media Committee Graphic Artist",
+        "Content Creator",
+        "Team Leader",
+        "Representative",
+        "President",
+        "Secretary",
+        "Treasurer",
+        "PIO"
+    ];
 
-        const collegeMappings = [
-            { code: "COED & SHS", pattern: /College of Education and Senior High\s*School|College of Education|Senior High\s*School|\bCOED\b|\bSHS\b/gi },
-            { code: "CBAA", pattern: /College of Business Administration and Accountancy|\bCBAA\b/gi },
-            { code: "CSSH", pattern: /College of Social Sciences and Humanities|\bCSSH\b/gi },
-            { code: "CNSM", pattern: /College of Natural Sciences and Mathematics|\bCNSM\b/gi },
-            { code: "CFAS", pattern: /College of Fisheries and Aquatic Sciences?|\bCFAS\b/gi },
-            { code: "IIAIS", pattern: /Institute of Islamic, Arabic, and International Studies|\bIIAIS\b/gi },
-            { code: "CHS", pattern: /College of Health Sciences|\bCHS\b/gi },
-            { code: "COE", pattern: /College of Engineering|\bCOE\b/gi },
-            { code: "COA", pattern: /College of Agriculture|\bCOA\b/gi }
-        ];
+    const collegeMappings = [
+        { code: "COED & SHS", pattern: /College of Education and Senior High\s*School|College of Education|Senior High\s*School|\bCOED\b|\bSHS\b/gi },
+        { code: "CBAA", pattern: /College of Business Administration and Accountancy|\bCBAA\b/gi },
+        { code: "CSSH", pattern: /College of Social Sciences and Humanities|\bCSSH\b/gi },
+        { code: "CNSM", pattern: /College of Natural Sciences and Mathematics|\bCNSM\b/gi },
+        { code: "CFAS", pattern: /College of Fisheries and Aquatic Sciences?|\bCFAS\b/gi },
+        { code: "IIAIS", pattern: /Institute of Islamic, Arabic, and International Studies|\bIIAIS\b/gi },
+        { code: "CHS", pattern: /College of Health Sciences|\bCHS\b/gi },
+        { code: "COE", pattern: /College of Engineering|\bCOE\b/gi },
+        { code: "COA", pattern: /College of Agriculture|\bCOA\b/gi }
+    ];
 
-        let remainingText = qrCodeMessage;
+    let remainingText = qrCodeMessage;
 
-        // 1. Extract Designation
-        for (const title of designationsList) {
-            const regex = new RegExp(`\\b${title}\\b`, "i");
-            if (regex.test(remainingText)) {
-                designation = title;
-                remainingText = remainingText.replace(regex, "").trim();
-                break;
-            }
+    // 1. Extract Designation
+    for (const title of designationsList) {
+        const regex = new RegExp(`\\b${title}\\b`, "i");
+        if (regex.test(remainingText)) {
+            designation = title;
+            remainingText = remainingText.replace(regex, "").trim();
+            break;
         }
-
-        // 2. Identify College Short Code
-        for (const mapping of collegeMappings) {
-            if (mapping.pattern.test(remainingText)) {
-                college = mapping.code;
-                break;
-            }
-        }
-
-        // 3. Strip ALL college patterns from remaining text
-        for (const mapping of collegeMappings) {
-            remainingText = remainingText.replace(mapping.pattern, "");
-        }
-        remainingText = remainingText.replace(/College of [A-Za-z\s]+/gi, "");
-
-        // 4. Clean remaining text for Name
-        name = remainingText.replace(/\s+/g, " ").trim() || "Unknown";
-
-        const scanData = {
-            id: Date.now(),
-            scanDate: currentDate,
-            scanTime: currentTime,
-            name: name,
-            college: college,
-            designation: designation,
-            rawQrData: qrCodeMessage,
-            imagePreview: imagePreviewUrl,
-            scanType: scanType
-        };
-
-        // Update UI
-        if (resultDisplay) {
-            resultDisplay.innerHTML = `
-                <div style="font-weight: bold; font-size: 1.1rem; color: #0f172a; margin-bottom: 6px;">${scanData.name}</div>
-                <div style="color: #2563eb; font-weight: 500; margin-bottom: 4px;">${scanData.college} · ${scanData.designation}</div>
-                <div style="font-size: 0.8rem; color: #64748b; margin-top: 10px; word-break: break-all; border-top: 1px solid #e2e8f0; padding-top: 8px;">
-                    <strong>Raw QR:</strong> ${scanData.rawQrData}
-                </div>
-            `;
-        }
-
-        const lastResultEl = document.getElementById("last-result");
-        if (lastResultEl) {
-            lastResultEl.textContent = `${scanData.name} | ${scanData.college} | ${scanData.designation}`;
-        }
-
-        if (copyResultBtn) copyResultBtn.disabled = false;
-
-        saveScanToHistory(scanData);
     }
 
+    // 2. Identify College Short Code
+    for (const mapping of collegeMappings) {
+        if (mapping.pattern.test(remainingText)) {
+            college = mapping.code;
+            break;
+        }
+    }
+
+    // 3. Strip ALL college patterns from remaining text
+    for (const mapping of collegeMappings) {
+        remainingText = remainingText.replace(mapping.pattern, "");
+    }
+    remainingText = remainingText.replace(/College of [A-Za-z\s]+/gi, "");
+
+    // 4. Clean remaining text for Name
+    name = remainingText.replace(/\s+/g, " ").trim() || "Unknown";
+
+    // Get operator name from Settings
+    const operatorName = localStorage.getItem('scanqr_account_info') || 'N/A';
+
+    const scanData = {
+        id: Date.now(),
+        scanDate: currentDate,
+        scanTime: currentTime,
+        name: name,
+        college: college,
+        designation: designation,
+        rawQrData: qrCodeMessage,
+        imagePreview: imagePreviewUrl,
+        scanType: scanType,
+        operator: operatorName
+    };
+
+    // Update Scanner UI Display
+    if (resultDisplay) {
+        resultDisplay.innerHTML = `
+            <div style="font-weight: bold; font-size: 1.1rem; color: #0f172a; margin-bottom: 6px;">${scanData.name}</div>
+            <div style="color: #2563eb; font-weight: 500; margin-bottom: 4px;">${scanData.college} · ${scanData.designation}</div>
+            <div style="font-size: 0.8rem; color: #64748b; margin-top: 10px; word-break: break-all; border-top: 1px solid #e2e8f0; padding-top: 8px;">
+                <strong>Raw QR:</strong> ${scanData.rawQrData}
+            </div>
+        `;
+    }
+
+    const lastResultEl = document.getElementById("last-result");
+    if (lastResultEl) {
+        lastResultEl.textContent = `${scanData.name} | ${scanData.college} | ${scanData.designation}`;
+    }
+
+    if (copyResultBtn) copyResultBtn.disabled = false;
+
+    // Save to local history
+    saveScanToHistory(scanData);
+
+    // Automatically send data to Google Sheet
+    sendToGoogleSheet(scanData);
+}
+
+// Function to send scan payloads to the active Google Web App URL
+// LocalStorage key for queued scans
+const QUEUE_KEY = 'scanqr_offline_queue';
+
+// Send scan payload to Google Sheet OR queue it if offline
+async function sendToGoogleSheet(data) {
+    const activeUrl = localStorage.getItem('scanqr_active_script_url');
+    
+    if (!activeUrl) {
+        console.warn('Google Script URL is not configured in Settings.');
+        return;
+    }
+
+    // Check if network is offline
+    if (!navigator.onLine) {
+        queueScanData(data);
+        showToast("Offline: Scan queued locally", "error");
+        return;
+    }
+
+    try {
+        await fetch(activeUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8'
+            },
+            body: JSON.stringify({
+                date: data.scanDate,
+                time: data.scanTime,
+                name: data.name,
+                college: data.college,
+                designation: data.designation,
+                rawQrData: data.rawQrData,
+                scanType: data.scanType,
+                operator: data.operator
+            })
+        });
+        showToast("Sent to Google Sheet!", "success");
+    } catch (err) {
+        console.error('Network request failed. Saving to queue:', err);
+        queueScanData(data);
+        showToast("Network error: Saved to Queue", "error");
+    }
+}
+
+// Save scan data to the offline queue
+function queueScanData(data) {
+    const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+    queue.push(data);
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+    updateQueueBadge();
+}
+
+// Sync all queued items to Google Sheets sequentially
+async function syncOfflineQueue() {
+    const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+    const activeUrl = localStorage.getItem('scanqr_active_script_url');
+
+    if (queue.length === 0 || !activeUrl || !navigator.onLine) {
+        return;
+    }
+
+    showToast(`Syncing ${queue.length} offline scan(s)...`, "success");
+
+    let remainingQueue = [...queue];
+
+    for (const data of queue) {
+        try {
+            await fetch(activeUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify({
+                    date: data.scanDate,
+                    time: data.scanTime,
+                    name: data.name,
+                    college: data.college,
+                    designation: data.designation,
+                    rawQrData: data.rawQrData,
+                    scanType: data.scanType,
+                    operator: data.operator
+                })
+            });
+            // Remove sent item from queue
+            remainingQueue.shift();
+            localStorage.setItem(QUEUE_KEY, JSON.stringify(remainingQueue));
+            updateQueueBadge();
+        } catch (error) {
+            console.error("Sync failed for item:", data, error);
+            showToast("Sync interrupted due to network issue", "error");
+            break; // Stop syncing until network stabilizes
+        }
+    }
+
+    if (remainingQueue.length === 0) {
+        showToast("All offline scans synced successfully!", "success");
+    }
+}
+
+// Update network status indicator / badge in UI (optional)
+function updateQueueBadge() {
+    const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+    const badgeEl = document.getElementById('queueBadge');
+    if (badgeEl) {
+        badgeEl.textContent = queue.length > 0 ? `${queue.length} Pending Sync` : '';
+        badgeEl.style.display = queue.length > 0 ? 'inline-block' : 'none';
+    }
+}
+
+// Automatic Sync Triggers
+window.addEventListener('online', () => {
+    showToast("Internet restored! Syncing queued data...", "success");
+    syncOfflineQueue();
+});
+
+window.addEventListener('offline', () => {
+    showToast("You are offline. Scans will be queued.", "error");
+});
+
+// Run sync check on initial page load if internet is available
+document.addEventListener('DOMContentLoaded', () => {
+    updateQueueBadge();
+    if (navigator.onLine) {
+        syncOfflineQueue();
+    }
+});
     function saveScanToHistory(scanData) {
         let logs = JSON.parse(localStorage.getItem('qr_logs') || '[]');
         logs.unshift(scanData);

@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ScanQR - Settings</title>
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="settings.css">
 </head>
 <body>
 
     <div class="app-layout">
+        <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
@@ -31,44 +32,60 @@
             </nav>
         </aside>
 
+        <!-- Main Workspace -->
         <main class="main-content">
-            <div class="main-card page-card">
-                <div class="page-header">
-                    <h2>Settings & Preferences</h2>
+            
+            <!-- Section 1: Account Settings -->
+            <div class="settings-card">
+                <h2>Account Settings</h2>
+                <div class="form-group">
+                    <label for="operatorName">Operator Name / Account:</label>
+                    <input type="text" id="operatorName" placeholder="e.g., Block Rep / Admin Name" />
+                </div>
+                <button type="button" id="saveAccountBtn" class="btn btn-green btn-full">Save Account Info</button>
+            </div>
+
+            <!-- Section 2: Google Script URL Management -->
+            <div class="settings-card">
+                <h2>Google Script URL Management</h2>
+                
+                <div class="form-group">
+                    <label for="savedPresetsSelect">Saved Presets:</label>
+                    <select id="savedPresetsSelect">
+                        <option value="">-- Select a saved URL --</option>
+                    </select>
                 </div>
 
-                <div class="settings-list">
-                    <div class="setting-item">
-                        <div>
-                            <h4>Auto-copy Result</h4>
-                            <p>Automatically copy scanned QR code content to clipboard</p>
-                        </div>
-                        <input type="checkbox" id="autoCopySetting" class="toggle-checkbox">
-                    </div>
+                <div class="form-group">
+                    <label for="presetLabel">Preset Label / Name:</label>
+                    <input type="text" id="presetLabel" placeholder="e.g., ATTENDANCE SHEET, DAY 1" />
+                </div>
 
-                    <div class="setting-item">
-                        <div>
-                            <h4>Beep on Scan</h4>
-                            <p>Play a audio notification sound when a QR code is detected</p>
-                        </div>
-                        <input type="checkbox" id="beepSetting" class="toggle-checkbox" checked>
-                    </div>
+                <div class="form-group">
+                    <label for="webAppUrl">Google Web App URL:</label>
+                    <input type="url" id="webAppUrl" placeholder="https://script.google.com/macros/s/.../exec" />
+                </div>
 
-                    <div class="setting-item">
-                        <div>
-                            <h4>Default Mode</h4>
-                            <p>Select which tab opens first when launching app</p>
-                        </div>
-                        <select class="camera-dropdown" id="defaultTabSetting">
-                            <option value="image">Scan Image</option>
-                            <option value="camera">Camera</option>
-                        </select>
-                    </div>
+                <div class="button-row">
+                    <button type="button" id="savePresetBtn" class="btn btn-green">Save & Label URL</button>
+                    <button type="button" id="deletePresetBtn" class="btn btn-danger">Delete Preset</button>
                 </div>
             </div>
+            <!-- Section 3: Offline Queue Status -->
+<div class="settings-card">
+    <h2>Offline Sync Queue</h2>
+    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 12px;">
+        Items scanned while offline will automatically upload when an internet connection is established.
+    </p>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <span id="queueStatusText" style="font-weight: 600; color: #1e293b;">Pending Items: 0</span>
+        <button type="button" id="manualSyncBtn" class="btn btn-green">Sync Now</button>
+    </div>
+</div>
+
         </main>
     </div>
 
-    <script src="main.js"></script>
+    <script src="settings.js"></script>
 </body>
 </html>

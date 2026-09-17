@@ -524,3 +524,132 @@ body {
 .toast-error {
     background-color: #ef4444;
 }
+
+/* ==========================================================================
+   RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+
+/* 1. Large Desktops & Wide Monitors (min-width: 1200px) */
+@media screen and (min-width: 1200px) {
+    .main-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+}
+
+/* 2. Tablets & Small Laptops (max-width: 992px) */
+@media screen and (max-width: 992px) {
+    .app-layout {
+        flex-direction: column;
+    }
+
+    /* Sidebar converts into a top navigation bar */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 12px 20px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .sidebar-brand {
+        margin-bottom: 0;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .nav-item {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+
+    .main-content {
+        padding: 16px;
+        width: 100%;
+    }
+    .content-body {
+    flex-direction: column;
+    padding: 24px;
+    gap: 24px;
+}
+
+    .preview-box, 
+    .drop-zone {
+        height: 320px;
+    }
+}
+
+/* 3. Mobile Devices / Smartphones (max-width: 768px) */
+@media screen and (max-width: 768px) {
+    /* Stack controls and adjust font sizing */
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .preview-box, 
+    .drop-zone {
+        height: 280px; /* Reduces camera/box height for smaller phone screens */
+    }
+
+    /* Table adjustments for smaller screens */
+    .logs-container {
+        overflow-x: auto; /* Adds horizontal scrolling if content overflows */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .logs-table {
+        min-width: 600px; /* Keeps readable layout inside scroll view */
+        font-size: 0.85rem;
+    }
+
+    /* Toast notification position adjustments */
+    .toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+    }
+
+    .toast {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+}
+
+/* 4. Small Mobile Phones (max-width: 480px) */
+@media screen and (max-width: 480px) {
+    .sidebar {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+             position: sticky;
+    }
+
+    .sidebar-nav {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .nav-item span {
+        font-size: 0.75rem;
+    }
+
+    .preview-box, 
+    .drop-zone {
+        height: 240px;
+    }
+
+    .btn {
+        width: 100%; /* Make buttons full width for easier touch targets */
+        justify-content: center;
+    }
+}

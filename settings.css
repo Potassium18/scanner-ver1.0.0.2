@@ -1,0 +1,354 @@
+/* ==========================================================================
+   SETTINGS PAGE STYLES (MATCHING MAIN THEME)
+   ========================================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #d1d5db; /* Neutral grayish background */
+    color: #1e293b;
+    min-height: 100vh;
+}
+
+/* Layout Grid */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    border-right: 1px solid #e2e8f0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 24px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+.nav-item.active {
+    background-color: #eff6ff;
+    color: #2563eb;
+}
+
+/* Main Content Wrapper */
+.main-content {
+    flex: 1;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 900px;
+}
+
+/* Cards */
+.settings-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.settings-card h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 18px;
+}
+
+/* Form Controls */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="url"],
+select {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #1e293b;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+select:focus {
+    border-color: #111827;
+    box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.1);
+}
+
+input::placeholder {
+    color: #9ca3af;
+}
+
+/* Buttons */
+.btn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: filter 0.2s ease, transform 0.1s ease;
+}
+
+.btn:active {
+    transform: scale(0.99);
+}
+
+.btn-green {
+    background-color: #1e7e34;
+    color: #ffffff;
+}
+
+.btn-green:hover {
+    background-color: #155724;
+}
+
+.btn-danger {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.button-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.button-row .btn {
+    flex: 1;
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    transform: translateX(120%);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast-success {
+    background-color: #10b981;
+}
+
+.toast-error {
+    background-color: #ef4444;
+}
+/* 1. Large Desktops & Wide Monitors (min-width: 1200px) */
+@media screen and (min-width: 1200px) {
+    .main-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+}
+
+/* 2. Tablets & Small Laptops (max-width: 992px) */
+@media screen and (max-width: 992px) {
+    .app-layout {
+        flex-direction: column;
+    }
+
+    /* Sidebar converts into a top navigation bar */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 12px 20px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .sidebar-brand {
+        margin-bottom: 0;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        gap: 8px;
+             position: sticky;
+    }
+
+    .nav-item {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+
+    .main-content {
+        padding: 16px;
+        width: 100%;
+    }
+    .main-content {
+        max-width: 992px;
+        margin: 0 auto;
+    }
+    .content-body {
+    flex-direction: column;
+    padding: 24px;
+    gap: 24px;
+}
+
+    .preview-box, 
+    .drop-zone {
+        height: 320px;
+    }
+}
+
+/* 3. Mobile Devices / Smartphones (max-width: 768px) */
+@media screen and (max-width: 768px) {
+    /* Stack controls and adjust font sizing */
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .main-content {
+        max-width: 768px;
+        margin: 0 auto;
+    }
+
+    .preview-box, 
+    .drop-zone {
+        height: 280px; /* Reduces camera/box height for smaller phone screens */
+    }
+
+    /* Table adjustments for smaller screens */
+    .logs-container {
+        overflow-x: auto; /* Adds horizontal scrolling if content overflows */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .logs-table {
+        min-width: 600px; /* Keeps readable layout inside scroll view */
+        font-size: 0.85rem;
+    }
+
+    /* Toast notification position adjustments */
+    .toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+    }
+
+    .toast {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+}
+
+/* 4. Small Mobile Phones (max-width: 480px) */
+@media screen and (max-width: 480px) {
+    .sidebar {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+.main-content {
+        max-width: 480px;
+        margin: 0 auto;
+    }
+    .sidebar-nav {
+        width: 100%;
+        justify-content: space-around;
+        position: sticky;
+    }
+
+    .nav-item span {
+        font-size: 0.75rem;
+    }
+
+    .preview-box, 
+    .drop-zone {
+        height: 240px;
+    }
+
+    .btn {
+        width: 100%; /* Make buttons full width for easier touch targets */
+        justify-content: center;
+    }
+}
