@@ -6,7 +6,8 @@
     <title>ScanQR - Scanner</title>
     <link rel="stylesheet" href="main.css">
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-<!-- PWA Settings -->
+
+    <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1b4d3e">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,7 +18,6 @@
 <body>
 
     <div class="app-layout">
-        <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
@@ -40,10 +40,8 @@
             </nav>
         </aside>
 
-        <!-- Main Content Area -->
         <main class="main-content">
             <div class="main-card">
-                <!-- Top Navigation Bar -->
                 <div class="top-bar">
                     <div class="tab-group">
                         <button class="tab-btn active" id="scanImageTab">
@@ -61,11 +59,8 @@
                     </div>
                 </div>
 
-                <!-- Main Body -->
                 <div class="content-body">
-                    <!-- LEFT PANEL -->
                     <div class="left-panel">
-                        <!-- 1. SCAN IMAGE VIEW -->
                         <div id="imageView" class="view-panel">
                             <div class="drop-zone" id="dropZone">
                                 <div class="upload-icon-wrapper">
@@ -86,7 +81,6 @@
                             </div>
                         </div>
 
-                        <!-- 2. CAMERA VIEW -->
                         <div id="cameraView" class="view-panel" hidden>
                             <div class="preview-box" id="previewContainer">
                                 <video id="video" playsinline hidden></video>
@@ -120,13 +114,12 @@
 
                             <div class="camera-select-wrapper">
                                 <select id="cameraSelect" class="camera-dropdown">
-                                    <option value="">HP HD Camera...</option>
+                                    <option value="">Default Camera...</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    <!-- RIGHT PANEL: Scanned Result -->
                     <div class="right-panel">
                         <div class="result-header">
                             <h2>Scanned Result</h2>
@@ -158,10 +151,7 @@
 
     <canvas id="canvas" hidden></canvas>
     <script src="main.js"></script>
-</body>
-<!-- PWA Registration & Install Listener -->
     <script>
-        // 1. Register Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -169,34 +159,6 @@
                     .catch((err) => console.warn('Service Worker registration failed:', err));
             });
         }
-
-        // 2. Handle Installation Prompt
-        let deferredPrompt;
-        const installBtn = document.getElementById('installScannerBtn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            if (installBtn) installBtn.style.display = 'block';
-        });
-
-        if (installBtn) {
-            installBtn.addEventListener('click', async () => {
-                if (!deferredPrompt) return;
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('Scanner App installed successfully');
-                }
-                deferredPrompt = null;
-                installBtn.style.display = 'none';
-            });
-        }
-
-        window.addEventListener('appinstalled', () => {
-            if (installBtn) installBtn.style.display = 'none';
-            deferredPrompt = null;
-        });
     </script>
 </body>
 </html>
