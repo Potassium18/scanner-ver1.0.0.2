@@ -155,10 +155,11 @@
         </main>
     </div>
 
-    <canvas id="canvas" hidden></canvas>
+<canvas id="canvas" hidden></canvas>
     <script src="main.js"></script>
     <script>
-        if ('serviceWorker' in navigator) {
+        // Register Service Worker only on supported web protocols (http/https)
+        if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
                     .then((reg) => console.log('Scanner Service Worker registered:', reg.scope))
@@ -166,10 +167,11 @@
             });
         }
 
-        let deferredPrompt;
+        // Single declaration to prevent SyntaxError
+        let deferredPrompt = null;
         const installBtn = document.getElementById('installScannerBtn');
 
-        // Capture PWA install prompt when supported by browser
+        // Capture browser install prompt
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -178,14 +180,17 @@
 
         if (installBtn) {
             installBtn.addEventListener('click', async () => {
-                if (!deferredPrompt) return;
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('User installed the web application');
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        console.log('App installed successfully');
+                    }
+                    deferredPrompt = null;
+                    installBtn.style.display = 'none';
+                } else {
+                    alert('To install this web app:\n\n1. Ensure you are viewing this page through a web server (http:// or https://).\n2. On Chrome/Edge, click the install icon in the address bar.\n3. On iOS Safari, tap Share > "Add to Home Screen".');
                 }
-                deferredPrompt = null;
-                installBtn.style.display = 'none';
             });
         }
 
@@ -193,40 +198,6 @@
             if (installBtn) installBtn.style.display = 'none';
             deferredPrompt = null;
         });
-    </script>
-    <script>
-        let deferredPrompt;
-const installBtn = document.getElementById('installScannerBtn');
-
-// Capture the browser's install event
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    if (installBtn) installBtn.style.display = 'flex';
-});
-
-if (installBtn) {
-    installBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            // Trigger the native browser install dialog
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                console.log('App installed successfully');
-            }
-            deferredPrompt = null;
-            installBtn.style.display = 'none';
-        } else {
-            // Fallback notice for unsupported environments or missing prompts
-            alert('To install this app:\n\n• On Chrome/Edge: Click the install icon in the address bar.\n• On iOS Safari: Tap Share > "Add to Home Screen".\n• On Desktop Safari: File > "Add to Dock".');
-        }
-    });
-}
-
-window.addEventListener('appinstalled', () => {
-    if (installBtn) installBtn.style.display = 'none';
-    deferredPrompt = null;
-});
     </script>
 </body>
 </html>
